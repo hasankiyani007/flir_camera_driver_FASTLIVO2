@@ -72,6 +72,17 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <memory>
 #include <string>
 #include <utility>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include "spinnaker_camera_driver/camera.h"
+#include "Spinnaker.h"
+#include "SpinGenApi/SpinnakerGenApi.h"
+struct time_stamp {
+  int64_t high;
+  int64_t low;
+};
+time_stamp *pointt;
+
 
 namespace spinnaker_camera_driver
 {
@@ -254,6 +265,16 @@ private:
   */
   void onInit()
   {
+
+    const char *user_name = getlogin();
+    std::string path_for_time_stamp = "/home/" + std::string(user_name) + "/timeshare";
+    const char *shared_file_name = path_for_time_stamp.c_str();
+
+    int fd = open(shared_file_name, O_RDWR);
+
+    pointt = (time_stamp *)mmap(NULL, sizeof(time_stamp), PROT_READ | PROT_WRITE,
+                              MAP_SHARED, fd, 0);
+
     // Get nodeHandles
     ros::NodeHandle& nh = getMTNodeHandle();
     ros::NodeHandle& pnh = getMTPrivateNodeHandle();
@@ -593,9 +614,26 @@ private:
 
             // wfov_image->temperature = spinnaker_.getCameraTemperature();
 
-            ros::Time time = ros::Time::now() + ros::Duration(config_.time_offset);
-            wfov_image->header.stamp = time;
-            wfov_image->image.header.stamp = time;
+            ros::Time time;
+            Spinnaker::GenApi::INodeMap* nodeMap = spinnaker_.getNodeMap();
+            Spinnaker::GenApi::CEnumerationPtr ptrTriggerMode = nodeMap->GetNode("TriggerMode");
+            Spinnaker::GenICam::gcstring triggerModeStr = ptrTriggerMode->ToString();
+            if (triggerModeStr.compare("On") == 0 && pointt != MAP_FAILED && pointt->low != 0)                     //if shared mem is valid, & low is not 0, and triggering is enabled.
+            {
+              ROS_INFO("Condition met for triggering,I'll use shared timestamp");
+              int64_t b = pointt->low;
+              double time_pc = b / 1000000000.0;                                                                   //Assign Timestamp from shared file to Ros time object.
+              time = ros::Time(time_pc);
+            }
+            else
+            {
+              ROS_INFO("Condition not met, I'm defaulting to current time!");
+              time = ros::Time::now() + ros::Duration(config_.time_offset);                                            //Else Use default current ros time. 
+            }
+	     wfov_image->header.stamp = time;
+             wfov_image->image.header.stamp = time;
+
+
 
             // Set the CameraInfo message
             ci_.reset(new sensor_msgs::CameraInfo(cinfo_->getCameraInfo()));

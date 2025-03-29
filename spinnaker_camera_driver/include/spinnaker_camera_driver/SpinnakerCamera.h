@@ -70,8 +70,8 @@ class SpinnakerCamera
 {
 public:
   SpinnakerCamera();
+  Spinnaker::GenApi::INodeMap* getNodeMap() const { return node_map_; }
   ~SpinnakerCamera();
-
   /*!
   * \brief Function that allows reconfiguration of the camera.
   *
