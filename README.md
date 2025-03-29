@@ -1,3 +1,6 @@
+## Noetic Driver for FAST-LIVO2 Hard synchronization
+This is my personal work on slightly modifying the noetic flir-camera-driver, in order to incorporate the timestamp synchronization needed at the software level. The sensors I am using are a Livox Avia and a Flir-blackfly S camera. 
+
 # flir_camera_driver
 
 This repository contains packages for FlirImaging's line of cameras. This repositories intent is to make use of Flir's newly developed SDK: Spinnaker. The camera driver is an evolution of pointgrey_camera_driver. It has been updated to use the new methods provided by the SDK.
