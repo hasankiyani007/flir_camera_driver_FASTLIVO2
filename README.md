@@ -1,6 +1,6 @@
-#Noetic Flir-Camera_Driver Implementation for timestamp hard synchronization between Camera and Lidar.
+# Noetic Flir-Camera_Driver Implementation for timestamp hard synchronization between Camera and Lidar.
 
-This is my implementation of the FLIR camera driver for FAST-LIVO2, incorporating shared timestamps for synchronization.
+This is my implementation of the FLIR camera driver for FAST-LIVO2, incorporating shared timestamps for synchronization for my Flir blackfly S camera, and my Livox Avia Sensor.
 
 
 
