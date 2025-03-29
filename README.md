@@ -1,3 +1,9 @@
+#Noetic Flir-Camera_Driver Implementation for timestamp hard synchronization between Camera and Lidar.
+
+This is my implementation of the FLIR camera driver for FAST-LIVO2, incorporating shared timestamps for synchronization.
+
+
+
 # flir_camera_driver
 
 This repository contains packages for FlirImaging's line of cameras. This repositories intent is to make use of Flir's newly developed SDK: Spinnaker. The camera driver is an evolution of pointgrey_camera_driver. It has been updated to use the new methods provided by the SDK.
